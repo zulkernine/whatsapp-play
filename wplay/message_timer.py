@@ -1,31 +1,35 @@
+# region IMPORTS
 import time
 import random
+from pathlib import Path
 
 from wplay.utils import browser_config
 from wplay.utils import target_search
 from wplay.utils import target_select
 from wplay.utils import io
-from wplay.utils import Logger
+from wplay.utils.Logger import Logger
 from wplay.utils.helpers import logs_path
+# endregion
 
 
-#region LOGGER create
-logger = Logger.setup_logger('logs',logs_path/'logs.log')
-#endregion
+# region LOGGER
+__logger = Logger(Path(__file__).name)
+# endregion
 
 
-async def msgTimer(target):
+async def message_timer(target):
     page, _ = await browser_config.configure_browser_and_load_whatsapp()
     if target is not None:
         try:
             await target_search.search_and_select_target(page, target)
         except Exception as e:
             print(e)
+            await page.reload()
             await target_search.search_and_select_target_without_new_chat_button(page, target)
     else:
         await target_select.manual_select_target(page)
     # Region INPUTS
-    logger.info("Input message information for message timer")
+    __logger.info("Input message information for message timer")
     message_type_numbers : int = int(
         input("How many types of messages will you send? "))
     messages : list[str] = list()

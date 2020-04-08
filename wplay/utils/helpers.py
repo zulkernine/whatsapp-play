@@ -1,13 +1,17 @@
 # region IMPORTS
 from pathlib import Path
+
+import signal
+import psutil
 from whaaaaat import style_from_dict, Token
 # endregion
 
 # region WEBSITES
-websites = {'whatsapp': 'https://web.whatsapp.com/'}
+websites = {'whatsapp': 'https://web.whatsapp.com/',
+            'wpp_unknown': 'https://web.whatsapp.com/send?phone='}
 # endregion
 
-# region SELECTOR
+# region SELECTORS
 whatsapp_selectors_dict = {
     'login_area':'#app > div > div > div.landing-header',
 
@@ -38,7 +42,11 @@ whatsapp_selectors_dict = {
     'send_file' : '#app > div > div > div > div > span > div > span > div > div > div > span > div > div > span',
     'profile_photo_element': '#side > header > div > div > img',
     'about_edit_button_element': '#app > div > div > div > div > span > div > div > div > div:nth-child(4) > div > div > span > div > span',
-    'about_text_area': '#app > div > div > div > div > span > div > div > div > div:nth-child(4) > div > div > div > div'
+    'about_text_area': '#app > div > div > div > div > span > div > div > div > div:nth-child(4) > div > div > div > div',
+    'contact_info_page_target_group_name_element': 'div:nth-child(2)>div>div> div:last-of-type',
+    'contact_info_page_target_group_creation_info_element': ':scope > div:last-child > span',
+    'contact_info_page_target_group_description_element': ':scope > div:last-child span:first-of-type',
+    'contact_info_page_target_group_member_elements': ':scope > div:nth-child(4) > div > div'
 }
 # endregion
 
@@ -46,6 +54,8 @@ whatsapp_selectors_dict = {
 data_folder_path = Path.home() / 'wplay'
 logs_path = Path.home() / 'wplay' / 'logs'
 user_data_folder_path = Path.home() / 'wplay' / '.userData'
+profile_photos_path = Path.home() / 'wplay' / 'media' / 'profilePhotos'
+tracking_folder_path = Path.home() / 'wplay' / 'trackingData'
 # endregion
 
 # region MENU STYLES
@@ -58,4 +68,23 @@ menu_style = style_from_dict({
     Token.Answer: '#5F819D bold',
     Token.Question: '',
 })
+# endregion
+
+# region FUNCTIONS
+def create_dirs():
+    logs_path.mkdir(parents=True, exist_ok=True)
+    user_data_folder_path.mkdir(parents=True, exist_ok=True)
+    profile_photos_path.mkdir(parents=True, exist_ok=True)
+    tracking_folder_path.mkdir(parents = True, exist_ok = True)
+
+
+def kill_child_processes(parent_pid, sig=signal.SIGTERM):
+    try:
+        parent = psutil.Process(parent_pid)
+    except psutil.NoSuchProcess:
+        return
+    children = parent.children(recursive=True)
+    print('Process Killed!')
+    for process in children:
+        process.send_signal(sig)
 # endregion

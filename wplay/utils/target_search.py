@@ -1,14 +1,18 @@
 # region TUTORIAL
 '''
 Go to region 'FOR SCRIPTING' and use the methods in your script!
+
 EXAMPLE OF USAGE:
 from wplay.pyppeteerUtils import pyppeteerConfig as pypConfig
 from wplay.pyppeteerUtils import pyppeteerSearch as pypSearch
+
 async def my_script(target):
     pages, browser = wait pyp.configure_browser_and_load_whatsapp(pypConfig.websites['whatsapp'])
     await pypSearch.search_for_target_and_get_ready_for_conversation(pages[0], target)
+
     message = pypSearch.ask_user_for_message_breakline_mode()
     await pypSearch.send_message(pages[0], message)
+
     message2 = pypSearch.ask_user_for_message()
     await pypSearch.send_message(pages[0], message2)
 '''
@@ -628,6 +632,7 @@ def __check_target_focused_title(target, target_focused_title):
         
         target = only_numerics(target)
         target_focused_title = only_numerics(target_focused_title)
+
         if target_focused_title.strip().find(target) == -1:
             print(f"Maybe you're focused in the wrong target, {target_focused_title}")
             must_continue = str(input("Do you want to continue (yes/no)? "))
